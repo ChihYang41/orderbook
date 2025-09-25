@@ -38,7 +38,7 @@ type NumericOrderLevel = [number, number];
 
 const EMPTY_ORDER_BOOK: OrderBook = { bids: [], asks: [] };
 
-const toNumericLevel = ([price, size]: OrderLevelUpdate): NumericOrderLevel | null => {
+export const toNumericLevel = ([price, size]: OrderLevelUpdate): NumericOrderLevel | null => {
   const priceValue = Number(price);
   const sizeValue = Number(size);
   if (!Number.isFinite(priceValue) || !Number.isFinite(sizeValue)) {
@@ -47,7 +47,7 @@ const toNumericLevel = ([price, size]: OrderLevelUpdate): NumericOrderLevel | nu
   return [priceValue, sizeValue];
 };
 
-const buildSnapshotSide = (levels: OrderLevelUpdate[], side: OrderSide) => {
+export const buildSnapshotSide = (levels: OrderLevelUpdate[], side: OrderSide) => {
   const numericLevels = levels.reduce<NumericOrderLevel[]>((acc, level) => {
     const numeric = toNumericLevel(level);
     if (numeric) acc.push(numeric);
@@ -56,12 +56,12 @@ const buildSnapshotSide = (levels: OrderLevelUpdate[], side: OrderSide) => {
   return calculateCumulative(numericLevels, side === 'bid');
 };
 
-const applySnapshot = (snapshot: SnapshotData): OrderBook => ({
+export const applySnapshot = (snapshot: SnapshotData): OrderBook => ({
   bids: buildSnapshotSide(snapshot.bids, 'bid'),
   asks: buildSnapshotSide(snapshot.asks, 'ask'),
 });
 
-const applySideDelta = (
+export const applySideDelta = (
   current: Order[],
   updates: OrderLevelUpdate[],
   side: OrderSide
@@ -111,7 +111,7 @@ const applySideDelta = (
   return calculateCumulative(Array.from(orderMap.entries()), isBids, metadata);
 };
 
-const applyDelta = (state: OrderBook, delta: DeltaData): OrderBook => ({
+export const applyDelta = (state: OrderBook, delta: DeltaData): OrderBook => ({
   bids: applySideDelta(state.bids, delta.bids, 'bid'),
   asks: applySideDelta(state.asks, delta.asks, 'ask'),
 });
