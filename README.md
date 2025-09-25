@@ -1,69 +1,42 @@
-# React + TypeScript + Vite
+# BTSE Order Book
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time order book viewer for the BTSE BTCPFC perpetual futures contract, built with React 19, TypeScript, Vite, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The app subscribes to the official BTSE WebSocket APIs to stream both incremental order book updates and the latest trade price. Incoming snapshots and deltas are merged in the browser to keep the UI in sync with the exchange, while visual cues highlight price direction, new levels, and size changes.
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 20 or newer.
+- [`pnpm`](https://pnpm.io/) (lockfile included). Install it globally with `npm install -g pnpm` if needed.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Available Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `pnpm dev` – start the Vite development server with hot module replacement.
+- `pnpm build` – type-check the project and produce a production build in `dist/`.
+- `pnpm preview` – preview the production build locally.
+- `pnpm lint` – run ESLint across the codebase.
+- `pnpm format` / `pnpm format:check` – format or verify formatting via Prettier for key source files.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Project Structure
+
+- `src/components/OrderBook/OrderBook.tsx` – main order book container that stitches the tables and price ticker together.
+- `src/components/OrderBook/hooks/useOrderBook.ts` – manages order book state, applies snapshots/deltas, and enforces the eight-level cap.
+- `src/components/OrderBook/hooks/useLastPrice.ts` – consumes the trade history WebSocket feed and tracks price direction.
+- `src/components/OrderBook/QuoteTable.tsx` & `OrderRow.tsx` – render the ask/bid tables with cumulative totals, depth bars, and animations.
+- `src/hooks/useWebsocket.ts` – generic hook providing resilient WebSocket subscriptions with auto-reconnect and manual resubscribe support.
+- `docs/SPEC.md` – reference specification for UI colors, animations, and behaviour.
+
+## Customisation
+
+- To visualise a different market, adjust the symbol passed to `useOrderBook` and `useLastPrice` (currently `BTCPFC`).
+- Styling tokens and animation definitions live in `src/index.css` and can be tweaked to match alternative themes.
