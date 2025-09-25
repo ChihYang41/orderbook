@@ -2,6 +2,8 @@
 
 A real-time order book viewer for the BTSE BTCPFC perpetual futures contract, built with React 19, TypeScript, Vite, and Tailwind CSS.
 
+![orderbook screen recoding](./public/orderbook.gif)
+
 ## Overview
 
 The app subscribes to the official BTSE WebSocket APIs to stream both incremental order book updates and the latest trade price. Incoming snapshots and deltas are merged in the browser to keep the UI in sync with the exchange, while visual cues highlight price direction, new levels, and size changes.
